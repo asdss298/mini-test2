@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <inttypes.h>  // 添加这个头文件用于正确的格式宏
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -17,7 +18,7 @@ void app_main(void)
     
     printf("Chip: ESP32-S3 Rev %d\n", chip_info.revision);
     printf("CPU cores: %d\n", chip_info.cores);
-    printf("Features: 0x%08X\n", chip_info.features);
+    printf("Features: 0x%08" PRIX32 "\n", chip_info.features);  // 修正这里
     
     // 获取内存信息
     size_t free_heap = esp_get_free_heap_size();
@@ -41,7 +42,7 @@ void app_main(void)
     
     int count = 0;
     while (1) {
-        printf("Loop %d: Free heap = %zu bytes\n", 
+        printf("Loop %d: Free heap = %" PRIu32 " bytes\n",  // 修正这里
                ++count, 
                esp_get_free_heap_size());
         vTaskDelay(1000 / portTICK_PERIOD_MS);
