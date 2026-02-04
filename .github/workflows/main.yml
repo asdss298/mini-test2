@@ -1,0 +1,50 @@
+name: ESP-IDF Build for E101-S3MN8-PS
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build for E101-S3MN8-PS
+
+    container:
+      image: espressif/idf:v5.1
+      options: -v ${{ github.workspace }}:/workspace
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build with ESP-IDF
+        shell: bash
+        run: |
+          . /opt/esp/idf/export.sh
+          cd /workspace
+          
+          echo "Setting target to ESP32-S3..."
+          idf.py set-target esp32s3
+          
+          if [ -f sdkconfig.defaults ]; then
+            cp sdkconfig.defaults sdkconfig
+          fi
+          
+          echo "Building project..."
+          idf.py fullclean
+          idf.py build
+          
+          echo "Build complete!"
+          ls -lh build/*.bin
+
+      - name: Upload Firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: e101-s3mn8-ps-firmware
+          path: |
+            /workspace/build/bootloader/bootloader.bin
+            /workspace/build/partition_table/partition-table.bin
+            /workspace/build/esp32s3-mini-test.bin
+          retention-days: 30
