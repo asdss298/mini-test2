@@ -12,7 +12,7 @@ jobs:
     name: Build for E101-S3MN8-PS
 
     container:
-      image: espressif/idf:v5.1
+      image: espressif/idf:v5.5.2
       options: -v ${{ github.workspace }}:/workspace
 
     steps:
